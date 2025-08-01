@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lingua - The Translator Webpage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1 class="logo">🌐 Lingua - The Translator</h1>
+    <div class="theme-toggle">
+      <input type="checkbox" id="theme-switch">
+      <label for="theme-switch" class="switch">
+        <span class="sun">☀️</span>
+        <span class="moon">🌙</span>
+        <span class="ball"></span>
+      </label>
+    </div>
+  </header>
+  <div class="container">
+    <div class="card input-card">
+      <textarea id="input-text" placeholder="Type or speak something..." spellcheck="false"></textarea>
+      <div class="controls">
+        <button id="mic-btn" class="icon-btn mic-btn" title="Speak to input text">🎤</button>
+        <select id="input-lang">
+          <option value="en">English</option>
+          <option value="hi">Hindi</option>
+          <option value="fr">French</option>
+          <option value="es">Spanish</option>
+          <option value="de">German</option>
+          <option value="ja">Japanese</option>
+        </select>
+      </div>
+    </div>
+    <div class="action-buttons">
+      <button id="swap-btn" class="icon-btn swap-btn" title="Swap input and output languages">🔄</button>
+      <button id="translate-btn" class="translate-btn">
+        ➡️ Translate
+      </button>
+    </div>
+    <div id="loader" class="loader" style="display: none;">
+      <div class="spinner"></div>
+    </div>
+    <div class="card output-card">
+      <p id="output-text">Your translation will appear here...</p>
+      <div class="controls">
+        <button id="play-btn" class="icon-btn play-btn" title="Listen to translation">▶️</button>
+        <button id="copy-btn" class="icon-btn copy-btn" title="Copy translation">📋</button>
+        <select id="output-lang">
+          <option value="hi">Hindi</option>
+          <option value="en">English</option>
+          <option value="fr">French</option>
+          <option value="es">Spanish</option>
+          <option value="de">German</option>
+          <option value="ja">Japanese</option>
+        </select>
+      </div>
+    </div>
+    <div class="history-section">
+      <h2>⏳ Translation History</h2>
+      <ul id="history-list"></ul>
+      <button id="clear-history" class="clear-btn">
+        🗑️ Clear History
+      </button>
+    </div>
+  </div>
+  <canvas id="particles"></canvas>
+  <script src="script.js"></script>
+</body>
+</html>
