@@ -11,6 +11,9 @@ const themeSwitch = document.getElementById('theme-switch');
 const historyList = document.getElementById('history-list');
 const clearHistoryBtn = document.getElementById('clear-history');
 const loader = document.getElementById('loader');
+const galaxyCanvas = document.getElementById('galaxy');
+const ctx = galaxyCanvas.getContext('2d');
+const listeningContainer = document.getElementById('listening-container');
 
 // Auto-resize textarea
 inputText.addEventListener('input', () => {
@@ -22,11 +25,13 @@ inputText.addEventListener('input', () => {
 window.onload = () => {
   const savedHistory = JSON.parse(localStorage.getItem('translationHistory')) || [];
   savedHistory.forEach(item => addHistoryItem(item.input, item.output, item.from, item.to));
+  initGalaxy();
 };
 
 // Theme toggle
 themeSwitch.addEventListener('change', () => {
-  document.body.classList.toggle('dark-mode', themeSwitch.checked);
+  document.body.classList.toggle('light-mode', themeSwitch.checked);
+  document.body.classList.toggle('dark-mode', !themeSwitch.checked);
 });
 
 // Translate text
@@ -54,7 +59,9 @@ translateBtn.addEventListener('click', async () => {
 
     setTimeout(() => {
       loader.style.display = 'none';
+      outputText.classList.add('typing');
       outputText.textContent = data.translated;
+      setTimeout(() => outputText.classList.remove('typing'), 500);
       addHistoryItem(text, data.translated, from, to);
       saveHistory(text, data.translated, from, to);
     }, 400);
@@ -72,22 +79,27 @@ playBtn.addEventListener('click', () => {
   speechSynthesis.speak(utterance);
 });
 
-// Voice input
+// Voice input with listening animation
 micBtn.addEventListener('click', () => {
   const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
   recognition.lang = inputLang.value;
+  listeningContainer.style.display = 'flex';
+  
   recognition.start();
   recognition.onresult = (event) => {
     inputText.value = event.results[0][0].transcript;
     inputText.dispatchEvent(new Event('input')); // Trigger auto-resize
+    listeningContainer.style.display = 'none';
   };
+  recognition.onerror = () => listeningContainer.style.display = 'none';
+  recognition.onend = () => listeningContainer.style.display = 'none';
 });
 
 // Copy output
 copyBtn.addEventListener('click', () => {
   navigator.clipboard.writeText(outputText.textContent);
-  copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-  setTimeout(() => copyBtn.innerHTML = '<i class="fas fa-copy"></i>', 2000);
+  copyBtn.innerHTML = '<svg class="btn-logo" viewBox="0 0 24 24" fill="#00cccc"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+  setTimeout(() => copyBtn.innerHTML = '<svg class="btn-logo" viewBox="0 0 24 24" fill="#00cccc"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>', 2000);
 });
 
 // Swap languages
@@ -129,52 +141,82 @@ function updateHistoryStorage(input, output, from, to) {
   localStorage.setItem('translationHistory', JSON.stringify(history));
 }
 
-// Particles background
-const canvas = document.getElementById('particles');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// Galaxy background with enhanced animation
+function initGalaxy() {
+  galaxyCanvas.width = window.innerWidth;
+  galaxyCanvas.height = window.innerHeight;
 
-const particles = [];
-const particleCount = 50;
+  const stars = [];
+  const symbols = ['Lingua', 'Traduci', '翻訳', 'अनुवाद', 'Übersetzen', 'Traduire', 'Traducir', '翻訳', '번역', 'Μετάφραση'];
+  const textParticles = [];
 
-class Particle {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.size = Math.random() * 3 + 1;
-    this.speedX = Math.random() * 0.5 - 0.25;
-    this.speedY = Math.random() * 0.5 - 0.25;
+  for (let i = 0; i < 300; i++) {
+    stars.push({
+      x: Math.random() * galaxyCanvas.width,
+      y: Math.random() * galaxyCanvas.height,
+      size: Math.random() * 2 + 1,
+      speedX: Math.random() * 0.2 - 0.1,
+      speedY: Math.random() * 0.2 - 0.1,
+      opacity: Math.random() * 0.8 + 0.2
+    });
   }
-  update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-  }
-  draw() {
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
 
-for (let i = 0; i < particleCount; i++) {
-  particles.push(new Particle());
-}
+  for (let i = 0; i < 40; i++) {
+    textParticles.push({
+      x: Math.random() * galaxyCanvas.width,
+      y: Math.random() * galaxyCanvas.height,
+      text: symbols[Math.floor(Math.random() * symbols.length)],
+      speedX: Math.random() * 0.3 - 0.15,
+      speedY: Math.random() * 0.3 - 0.15,
+      opacity: Math.random() * 0.5 + 0.3,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: Math.random() * 0.02 - 0.01
+    });
+  }
 
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => {
-    p.update();
-    p.draw();
+  function animateGalaxy() {
+    ctx.clearRect(0, 0, galaxyCanvas.width, galaxyCanvas.height);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, galaxyCanvas.width, galaxyCanvas.height);
+
+    // Draw stars with increased movement
+    ctx.fillStyle = '#00cccc';
+    stars.forEach(star => {
+      ctx.globalAlpha = star.opacity;
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+      ctx.fill();
+      star.x += star.speedX;
+      star.y += star.speedY;
+      if (star.x < 0 || star.x > galaxyCanvas.width) star.speedX *= -1;
+      if (star.y < 0 || star.y > galaxyCanvas.height) star.speedY *= -1;
+    });
+
+    // Draw text symbols with increased movement
+    ctx.font = '20px Orbitron';
+    ctx.fillStyle = '#ffd700';
+    textParticles.forEach(p => {
+      ctx.globalAlpha = p.opacity;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.fillText(p.text, 0, 0);
+      ctx.restore();
+      p.x += p.speedX;
+      p.y += p.speedY;
+      p.rotation += p.rotSpeed;
+      if (p.x < 0 || p.x > galaxyCanvas.width) p.speedX *= -1;
+      if (p.y < 0 || p.y > galaxyCanvas.height) p.speedY *= -1;
+    });
+
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(animateGalaxy);
+  }
+
+  animateGalaxy();
+  window.addEventListener('resize', () => {
+    galaxyCanvas.width = window.innerWidth;
+    galaxyCanvas.height = window.innerHeight;
+    initGalaxy();
   });
-  requestAnimationFrame(animateParticles);
 }
-
-animateParticles();
-window.addEventListener('resize', () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});

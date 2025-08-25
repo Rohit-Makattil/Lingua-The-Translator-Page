@@ -3,27 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lingua - The Translator Webpage</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Lingua - The Translator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="dark-mode">
   <header>
-    <h1 class="logo">🌐 Lingua - The Translator</h1>
+    <div class="logo-container">
+      <svg class="logo" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 5C12.5 5 5 12.5 5 20C5 27.5 12.5 35 20 35C27.5 35 35 27.5 35 20C35 12.5 27.5 5 20 5ZM20 30C15.5 30 10 24.5 10 20C10 15.5 15.5 10 20 10C24.5 10 30 15.5 30 20C30 24.5 24.5 30 20 30Z" fill="#00cccc"/>
+        <path d="M20 12C16.5 12 13 15.5 13 20C13 24.5 16.5 28 20 28C23.5 28 27 24.5 27 20C27 15.5 23.5 12 20 12Z" fill="#ffd700"/>
+      </svg>
+      <h1 class="logo-text">Lingua - The Translator</h1>
+    </div>
     <div class="theme-toggle">
-      <input type="checkbox" id="theme-switch">
+      <input type="checkbox" id="theme-switch" checked>
       <label for="theme-switch" class="switch">
-        <span class="sun">☀️</span>
-        <span class="moon">🌙</span>
+        <span class="icon sun">☀️</span>
+        <span class="icon moon">🌙</span>
         <span class="ball"></span>
       </label>
     </div>
   </header>
   <div class="container">
     <div class="card input-card">
-      <textarea id="input-text" placeholder="Type or speak something..." spellcheck="false"></textarea>
+      <textarea id="input-text" placeholder="Enter text to translate..." spellcheck="false"></textarea>
       <div class="controls">
-        <button id="mic-btn" class="icon-btn mic-btn" title="Speak to input text">🎤</button>
+        <button id="mic-btn" class="icon-btn mic-btn" title="Voice Input">
+          <svg class="btn-logo" viewBox="0 0 24 24" fill="#00cccc">
+            <path d="M12 2C9.24 2 7 4.24 7 7v6c0 2.76 2.24 5 5 5s5-2.24 5-5V7c0-2.76-2.24-5-5-5zm0 12c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3s3 1.34 3 3v4c0 1.66-1.34 3-3 3z"/>
+            <path d="M12 15c1.93 0 3.5-1.57 3.5-3.5V9h-7v2.5C8.5 13.43 9.07 15 12 15zm0 2c-2.03 0-6 1-6 1v1h12v-1s-3.97-1-6-1z"/>
+          </svg>
+        </button>
+        <div id="listening-container" class="listening-container" style="display: none;">
+          <span>Listening…</span>
+          <svg class="sound-waves" viewBox="0 0 24 24">
+            <circle cx="4" cy="12" r="2" />
+            <circle cx="12" cy="12" r="2" />
+            <circle cx="20" cy="12" r="2" />
+          </svg>
+        </div>
         <select id="input-lang">
           <option value="en">English</option>
           <option value="hi">Hindi</option>
@@ -35,19 +54,25 @@
       </div>
     </div>
     <div class="action-buttons">
-      <button id="swap-btn" class="icon-btn swap-btn" title="Swap input and output languages">🔄</button>
-      <button id="translate-btn" class="translate-btn">
-        ➡️ Translate
-      </button>
+      <button id="swap-btn" class="icon-btn swap-btn" title="Swap Languages">↔</button>
+      <button id="translate-btn" class="translate-btn">Translate</button>
     </div>
     <div id="loader" class="loader" style="display: none;">
       <div class="spinner"></div>
     </div>
     <div class="card output-card">
-      <p id="output-text">Your translation will appear here...</p>
+      <p id="output-text">Translation will appear here...</p>
       <div class="controls">
-        <button id="play-btn" class="icon-btn play-btn" title="Listen to translation">▶️</button>
-        <button id="copy-btn" class="icon-btn copy-btn" title="Copy translation">📋</button>
+        <button id="play-btn" class="icon-btn play-btn" title="Play Translation">
+          <svg class="btn-logo" viewBox="0 0 24 24" fill="#00cccc">
+            <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.68L9.54 5.98C8.87 5.55 8 6.03 8 6.82z"/>
+          </svg>
+        </button>
+        <button id="copy-btn" class="icon-btn copy-btn" title="Copy Translation">
+          <svg class="btn-logo" viewBox="0 0 24 24" fill="#00cccc">
+            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+          </svg>
+        </button>
         <select id="output-lang">
           <option value="hi">Hindi</option>
           <option value="en">English</option>
@@ -59,14 +84,13 @@
       </div>
     </div>
     <div class="history-section">
-      <h2>⏳ Translation History</h2>
+      <h2>Translation History</h2>
       <ul id="history-list"></ul>
-      <button id="clear-history" class="clear-btn">
-        🗑️ Clear History
-      </button>
+      <button id="clear-history" class="clear-btn">Clear History</button>
     </div>
   </div>
-  <canvas id="particles"></canvas>
+  <canvas id="galaxy"></canvas>
+  <script src="https://kit.fontawesome.com/a076d05399.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
